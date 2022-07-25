@@ -1,4 +1,6 @@
+#include <TimeLib.h>
 #include <LiquidCrystal.h>
+#include <EasyBuzzer.h>
 #include <Wire.h>
 int show=0;
 LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
@@ -16,12 +18,15 @@ int speedLPin = 3;
 int motorRPin = 13;
 int brakeRPin = 8;
 int speedRPin = 11;
+int buzzerPin = 1;  
 bool bad = false;
 bool good = true;
+bool nightTime = false;
 
 
 void setup() {
   Serial.begin(9600);
+  EasyBuzzer.setPin(pin);
   lcd.setCursor(0, 0);
   lcd.print("    PlantBot    "); 
   delay(100);
@@ -45,7 +50,8 @@ void setup() {
   pinMode(brakeRPin, OUTPUT);
 }
 
-void loop() {  
+void loop() { 
+  EasyBuzzer.update(); 
   lcd.clear();
   moistVal = analogRead(moistPin);
   Serial.println(moistVal);
@@ -55,6 +61,12 @@ void loop() {
   int percent = 2.718282 * 2.718282 * (.008985 * moistVal + 0.207762);
   Serial.print(percent);
   Serial.println("% Moisture ");
+  if (!nightTime && value >=tooDark){
+    setTime(0,0,0,1,1,2016);
+    nightTime = true;
+  }
+  if (nightTime && value < tooDark)
+    nightTime = false;
   if (moistVal <= tooDry || moistVal >= tooWet) {
     if (value>=tooDark){
       digitalWrite(redPin, HIGH);
@@ -130,9 +142,34 @@ void loop() {
         bad = false;
     }
 
-  }
+    }
  }
-
+ if (moistVal >= tooWet)
+  EasyBuzzer.beep(
+          3000,
+            500,
+            300,
+            3,
+            3000,
+            3,
+        );
+  else if (moistVal <= tooDry)
+    EasyBuzzer.beep(
+            3000,
+            500,
+            500,
+            5,
+            2000,
+            5,
+          );
+  else if (value >= tooDark && hour()>=16)
+    EasyBuzzer.beep(
+            3000,
+            500,
+            300,
+            1,
+            2000,
+            5,
+          );
   delay(100);
-
 }
