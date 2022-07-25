@@ -10,6 +10,14 @@ int tooDark = 5000;
 int greenPin = 13;
 int bluePin = 12;
 int redPin = 8;
+int motorLPin = 12;
+int brakeLPin = 9;
+int speedLPin = 3;
+int motorRPin = 13;
+int brakeRPin = 8;
+int speedRPin = 11;
+bool bad = false;
+bool good = true;
 
 
 void setup() {
@@ -31,6 +39,10 @@ void setup() {
   delay(1500);
   lcd.clear();
   lcd.setCursor(0,0);
+  pinMode(motorLPin, OUTPUT);
+  pinMode(brakeLPin, OUTPUT);
+  pinMode(motorRPin, OUTPUT);
+  pinMode(brakeRPin, OUTPUT);
 }
 
 void loop() {  
@@ -49,16 +61,43 @@ void loop() {
       digitalWrite(bluePin, LOW);
       digitalWrite(greenPin, LOW);
       lcd.setCursor(0,0);
-      lcd.print("    ________    ");
+      lcd.print(" ________  ");
       lcd.setCursor(1,0);
-      lcd.print("    |      |    ");
+      lcd.print(" |       |    ");
+      if (!bad){
+        digitalWrite(motorLPin, HIGH); 
+        digitalWrite(brakeLPin, LOW); 
+        digitalWrite(motorLPin, LOW); 
+        digitalWrite(brakeLPin, LOW);
+        analogWrite(speedLPin, 122);
+        analogWrite(speedRPin, 122);
+        delay(250);
+        digitalWrite(motorLPin, LOW); 
+        digitalWrite(brakeLPin, LOW); 
+        digitalWrite(motorLPin, HIGH); 
+        digitalWrite(brakeLPin, LOW);
+        analogWrite(speedLPin, 122);
+        analogWrite(speedRPin, 122);
+        delay(500);
+        digitalWrite(motorLPin, HIGH); 
+        digitalWrite(brakeLPin, LOW); 
+        digitalWrite(motorLPin, LOW); 
+        digitalWrite(brakeLPin, LOW);
+        analogWrite(speedLPin, 122);
+        analogWrite(speedRPin, 122);
+        delay(250);
+        digitalWrite(brakeLPin, HIGH);
+        digitalWrite(brakeRPin, HIGH);
+        good = false;
+        bad = true;
+      }
     }
     else{
       digitalWrite(redPin, LOW);
       digitalWrite(bluePin, HIGH);
       digitalWrite(greenPin, LOW);
-      lcd.setCursor(0,0);
-      lcd.print("    ________    ");
+      lcd.setCursor(1,0);
+      lcd.print(" ________  ");
     }
   }
   else {
@@ -66,19 +105,34 @@ void loop() {
       digitalWrite(redPin, LOW);
       digitalWrite(bluePin, HIGH);
       digitalWrite(greenPin, LOW);
-      lcd.setCursor(0,0);
-      lcd.print("    ________    ");
+      lcd.setCursor(1,0);
+      lcd.print(" ________  ");
     }
     else{
       digitalWrite(redPin, LOW);
       digitalWrite(bluePin, LOW);
       digitalWrite(greenPin, HIGH); 
       lcd.setCursor(0,0);
-      lcd.print("    |      |    ");
+      lcd.print(" |        |  ");
       lcd.setCursor(1,0);
-      lcd.print("    ________    ");
+      lcd.print("  ________  ");
+      if (!good){
+        digitalWrite(motorLPin, HIGH); 
+        digitalWrite(brakeLPin, LOW); 
+        digitalWrite(motorLPin, LOW); 
+        digitalWrite(brakeLPin, LOW);
+        analogWrite(speedLPin, 122);
+        analogWrite(speedRPin, 122);
+        delay(2000);
+        digitalWrite(brakeLPin, HIGH);
+        digitalWrite(brakeRPin, HIGH);
+        good = true;
+        bad = false;
     }
 
   }
+ }
+
+  delay(100);
 
 }
