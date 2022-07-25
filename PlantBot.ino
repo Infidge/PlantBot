@@ -9,9 +9,8 @@ int moistVal = 0;
 int tooDry = 150;
 int tooWet = 400;
 int tooDark = 5000;
-int greenPin = 13;
-int bluePin = 12;
-int redPin = 8;
+int leftLEDPin;
+int rightLEDPin;
 int motorLPin = 12;
 int brakeLPin = 9;
 int speedLPin = 3;
@@ -19,6 +18,7 @@ int motorRPin = 13;
 int brakeRPin = 8;
 int speedRPin = 11;
 int buzzerPin = 1;  
+int lightSensorPin;
 bool bad = false;
 bool good = true;
 bool nightTime = false;
@@ -51,16 +51,18 @@ void setup() {
 }
 
 void loop() { 
+  analogWrite(leftLEDPin, HIGH);
+  analogWrite(rightLEDPin, HIGH);
   EasyBuzzer.update(); 
   lcd.clear();
   moistVal = analogRead(moistPin);
   Serial.println(moistVal);
-  int value = analogRead(A0);
-  Serial.println("Analog value : ");
-  Serial.println(value);
   int percent = 2.718282 * 2.718282 * (.008985 * moistVal + 0.207762);
   Serial.print(percent);
   Serial.println("% Moisture ");
+  int value = analogRead(lightSensorPin);
+  Serial.println("Analog value : ");
+  Serial.println(value);
   if (!nightTime && value >=tooDark){
     setTime(0,0,0,1,1,2016);
     nightTime = true;
@@ -69,9 +71,6 @@ void loop() {
     nightTime = false;
   if (moistVal <= tooDry || moistVal >= tooWet) {
     if (value>=tooDark){
-      digitalWrite(redPin, HIGH);
-      digitalWrite(bluePin, LOW);
-      digitalWrite(greenPin, LOW);
       lcd.setCursor(0,0);
       lcd.print(" ________  ");
       lcd.setCursor(1,0);
@@ -105,25 +104,16 @@ void loop() {
       }
     }
     else{
-      digitalWrite(redPin, LOW);
-      digitalWrite(bluePin, HIGH);
-      digitalWrite(greenPin, LOW);
       lcd.setCursor(1,0);
       lcd.print(" ________  ");
     }
   }
   else {
      if (value>=tooDark){
-      digitalWrite(redPin, LOW);
-      digitalWrite(bluePin, HIGH);
-      digitalWrite(greenPin, LOW);
       lcd.setCursor(1,0);
       lcd.print(" ________  ");
     }
     else{
-      digitalWrite(redPin, LOW);
-      digitalWrite(bluePin, LOW);
-      digitalWrite(greenPin, HIGH); 
       lcd.setCursor(0,0);
       lcd.print(" |        |  ");
       lcd.setCursor(1,0);
@@ -146,7 +136,7 @@ void loop() {
  }
  if (moistVal >= tooWet)
   EasyBuzzer.beep(
-          3000,
+            3000,
             500,
             300,
             3,
