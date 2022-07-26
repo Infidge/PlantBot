@@ -26,7 +26,7 @@ bool nightTime = false;
 
 void setup() {
   Serial.begin(9600);
-  EasyBuzzer.setPin(pin);
+  EasyBuzzer.setPin(buzzerPin);
   lcd.setCursor(0, 0);
   lcd.print("    PlantBot    "); 
   delay(100);
@@ -141,7 +141,7 @@ void loop() {
             300,
             3,
             3000,
-            3,
+            3
         );
   else if (moistVal <= tooDry)
     EasyBuzzer.beep(
@@ -150,7 +150,7 @@ void loop() {
             500,
             5,
             2000,
-            5,
+            5
           );
   else if (value >= tooDark && hour()>=16)
     EasyBuzzer.beep(
@@ -159,7 +159,7 @@ void loop() {
             300,
             1,
             2000,
-            5,
+            5
           );
   delay(100);
 }
