@@ -53,9 +53,6 @@ void setup() {
   pinMode(ENA_pin, OUTPUT);
   pinMode(ENB_pin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
-  pinMode(speedLPin, OUTPUT);
-  pinMode(speedRPin, OUTPUT);
-  pinMode(lightSensorPin, INPUT);
   tsl.setGain(TSL2591_GAIN_LOW);
   tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);
 }
