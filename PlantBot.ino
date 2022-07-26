@@ -8,7 +8,7 @@ LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 int moistPin = 0;
 int moistVal = 0;
 int tooDry = 150;
-int tooWet = 400;
+int tooWet = 800;
 int tooDark = 50;
 int motor1pin1 = 1;
 int motor1pin2 = 8;
@@ -188,5 +188,5 @@ void loop() {
     beepBool = true;
   }
   
-  delay(10);
+  delay(100);
 }
