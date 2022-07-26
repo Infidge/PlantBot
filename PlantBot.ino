@@ -10,23 +10,19 @@ int moistVal = 0;
 int tooDry = 150;
 int tooWet = 400;
 int tooDark = 50;
-int leftLEDPin;
-int rightLEDPin;
-int motorLPin = 12;
-int brakeLPin = 9;
-int speedLPin = 3;
-int motorRPin = 13;
-int brakeRPin = 8;
-int speedRPin = 11;
-int buzzerPin = 9;  
-int lightSensorPin;
+int motor1pin1 = 1;
+int motor1pin2 = 8;
+int motor2pin1 = 12;
+int motor2pin2 = 13;
+int ENA_pin = 9;
+int ENB_pin = 10;
+int buzzerPin = 11;  
 bool bad = false;
 bool good = true;
 bool nightTime = false;
 bool beepBool = false;
 int sec;
-int mins;
-int hours;
+
 Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
 sensors_event_t event;
 
@@ -50,23 +46,21 @@ void setup() {
   delay(1500);
   lcd.clear();
   lcd.setCursor(0,0);
-  pinMode(motorLPin, OUTPUT);
-  pinMode(brakeLPin, OUTPUT);
-  pinMode(motorRPin, OUTPUT);
-  pinMode(brakeRPin, OUTPUT);
+  pinMode(motor1pin1, OUTPUT);
+  pinMode(motor1pin2, OUTPUT);
+  pinMode(motor2pin1, OUTPUT);
+  pinMode(motor2pin2, OUTPUT);
+  pinMode(ENA_pin, OUTPUT);
+  pinMode(ENB_pin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
   pinMode(speedLPin, OUTPUT);
   pinMode(speedRPin, OUTPUT);
-  pinMode(leftLEDPin, OUTPUT);
-  pinMode(rightLEDPin, OUTPUT);
   pinMode(lightSensorPin, INPUT);
   tsl.setGain(TSL2591_GAIN_LOW);
   tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);
 }
 
 void loop() { 
-  analogWrite(leftLEDPin, HIGH);
-  analogWrite(rightLEDPin, HIGH);
   EasyBuzzer.update(); 
   lcd.clear();
   moistVal = analogRead(moistPin);
@@ -91,29 +85,33 @@ void loop() {
       lcd.setCursor(1,0);
       lcd.print(" |       |    ");
       if (!bad){
-        digitalWrite(motorLPin, HIGH); 
-        digitalWrite(brakeLPin, LOW); 
-        digitalWrite(motorLPin, LOW); 
-        digitalWrite(brakeLPin, LOW);
-        analogWrite(speedLPin, 122);
-        analogWrite(speedRPin, 122);
+        digitalWrite(motor1pin1, HIGH); 
+        digitalWrite(motor1pin2, LOW); 
+        digitalWrite(motor2pin1, HIGH); 
+        digitalWrite(motor2pin2, LOW);
+        analogWrite(ENA_pin, 100);
+        analogWrite(ENB_pin, 100);
         delay(250);
-        digitalWrite(motorLPin, LOW); 
-        digitalWrite(brakeLPin, LOW); 
-        digitalWrite(motorLPin, HIGH); 
-        digitalWrite(brakeLPin, LOW);
-        analogWrite(speedLPin, 122);
-        analogWrite(speedRPin, 122);
+        analogWrite(ENA_pin, 0);
+        analogWrite(ENB_pin, 0);
+        digitalWrite(motor1pin1, LOW); 
+        digitalWrite(motor1pin2, HIGH); 
+        digitalWrite(motor2pin1, LOW); 
+        digitalWrite(motor2pin2, HIGH);
+        analogWrite(ENA_pin, 100);
+        analogWrite(ENB_pin, 100);
         delay(500);
-        digitalWrite(motorLPin, HIGH); 
-        digitalWrite(brakeLPin, LOW); 
-        digitalWrite(motorLPin, LOW); 
-        digitalWrite(brakeLPin, LOW);
-        analogWrite(speedLPin, 122);
-        analogWrite(speedRPin, 122);
+        analogWrite(ENA_pin, 0);
+        analogWrite(ENB_pin, 0);
+        digitalWrite(motor1pin1, HIGH); 
+        digitalWrite(motor1pin2, LOW); 
+        digitalWrite(motor2pin1, HIGH); 
+        digitalWrite(motor2pin2, LOW);
+        analogWrite(ENA_pin, 100);
+        analogWrite(ENB_pin, 100);
         delay(250);
-        digitalWrite(brakeLPin, HIGH);
-        digitalWrite(brakeRPin, HIGH);
+        analogWrite(ENA_pin, 0);
+        analogWrite(ENB_pin, 0);
         good = false;
         bad = true;
       }
@@ -134,15 +132,15 @@ void loop() {
       lcd.setCursor(1,0);
       lcd.print("  ________  ");
       if (!good){
-        digitalWrite(motorLPin, HIGH); 
-        digitalWrite(brakeLPin, LOW); 
-        digitalWrite(motorLPin, LOW); 
-        digitalWrite(brakeLPin, LOW);
-        analogWrite(speedLPin, 122);
-        analogWrite(speedRPin, 122);
-        delay(2000);
-        digitalWrite(brakeLPin, HIGH);
-        digitalWrite(brakeRPin, HIGH);
+        digitalWrite(motor1pin1, HIGH); 
+        digitalWrite(motor1pin2, LOW); 
+        digitalWrite(motor2pin1, HIGH); 
+        digitalWrite(motor2pin2, LOW);
+        analogWrite(ENA_pin, 100);
+        analogWrite(ENB_pin, 100);
+        delay(3000);
+        analogWrite(ENA_pin, 0);
+        analogWrite(ENB_pin, 0);
         good = true;
         bad = false;
     }
@@ -163,8 +161,6 @@ void loop() {
         );
   beepBool = false;
   sec = second();
-  mins = minute();
-  hours = hour();
  }
   else if (moistVal <= tooDry && beepBool){
     EasyBuzzer.beep(
@@ -177,8 +173,6 @@ void loop() {
           );
     beepBool = false;
     sec = second();
-    mins = minute();
-    hours = hour();
 }
   else if (value <= tooDark && hour()>=16 && beepBool){
     EasyBuzzer.beep(
@@ -191,8 +185,6 @@ void loop() {
           );
     beepBool = false;
     sec = second();
-    mins = minute();
-    hours = hour();
   }
 
   if (second()-sec>12 || (second()<sec && second()+60-sec>12)){
