@@ -1,3 +1,4 @@
+#include <Adafruit_TSL2591.h>
 #include <TimeLib.h>
 #include <LiquidCrystal.h>
 #include <EasyBuzzer.h>
@@ -8,7 +9,7 @@ int moistPin = 0;
 int moistVal = 0;
 int tooDry = 150;
 int tooWet = 400;
-int tooDark = 5000;
+int tooDark = 50;
 int leftLEDPin;
 int rightLEDPin;
 int motorLPin = 12;
@@ -22,7 +23,8 @@ int lightSensorPin;
 bool bad = false;
 bool good = true;
 bool nightTime = false;
-
+Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
+sensors_event_t event;
 
 void setup() {
   Serial.begin(9600);
@@ -54,6 +56,8 @@ void setup() {
   pinMode(leftLEDPin, OUTPUT);
   pinMode(rightLEDPin, OUTPUT);
   pinMode(lightSensorPin, INPUT);
+  tsl.setGain(TSL2591_GAIN_LOW);
+  tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);
 }
 
 void loop() { 
@@ -64,16 +68,17 @@ void loop() {
   moistVal = analogRead(moistPin);
   Serial.println(moistVal);
   int percent = 2.718282 * 2.718282 * (.008985 * moistVal + 0.207762);
-  Serial.print(percent);
-  Serial.println("% Moisture ");
-  int value = analogRead(lightSensorPin);
-  Serial.println("Analog value : ");
-  Serial.println(value);
-  if (!nightTime && value >=tooDark){
+  /*Serial.print(percent);
+  Serial.println("% Moisture ");*/
+  tsl.getEvent(&event);
+  float value = event.light;
+  Serial.print(value);
+  Serial.println(" lux");
+  if (!nightTime && value <=tooDark){
     setTime(0,0,0,1,1,2016);
     nightTime = true;
   }
-  if (nightTime && value < tooDark)
+  if (nightTime && value > tooDark)
     nightTime = false;
   if (moistVal <= tooDry || moistVal >= tooWet) {
     if (value>=tooDark){
@@ -115,7 +120,7 @@ void loop() {
     }
   }
   else {
-     if (value>=tooDark){
+     if (value <= tooDark){
       lcd.setCursor(1,0);
       lcd.print(" ________  ");
     }
@@ -158,7 +163,7 @@ void loop() {
             2000,
             5
           );
-  else if (value >= tooDark && hour()>=16)
+  else if (value <= tooDark && hour()>=16)
     EasyBuzzer.beep(
             3000,
             500,
