@@ -48,6 +48,12 @@ void setup() {
   pinMode(brakeLPin, OUTPUT);
   pinMode(motorRPin, OUTPUT);
   pinMode(brakeRPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(speedLPin, OUTPUT);
+  pinMode(speedRPin, OUTPUT);
+  pinMode(leftLEDPin, OUTPUT);
+  pinMode(rightLEDPin, OUTPUT);
+  pinMode(lightSensorPin, INPUT);
 }
 
 void loop() { 
