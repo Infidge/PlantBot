@@ -18,11 +18,15 @@ int speedLPin = 3;
 int motorRPin = 13;
 int brakeRPin = 8;
 int speedRPin = 11;
-int buzzerPin = 1;  
+int buzzerPin = 9;  
 int lightSensorPin;
 bool bad = false;
 bool good = true;
 bool nightTime = false;
+bool beepBool = false;
+int sec;
+int mins;
+int hours;
 Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
 sensors_event_t event;
 
@@ -68,8 +72,8 @@ void loop() {
   moistVal = analogRead(moistPin);
   Serial.println(moistVal);
   int percent = 2.718282 * 2.718282 * (.008985 * moistVal + 0.207762);
-  /*Serial.print(percent);
-  Serial.println("% Moisture ");*/
+  Serial.print(percent);
+  Serial.println("% Moisture ");
   tsl.getEvent(&event);
   float value = event.light;
   Serial.print(value);
@@ -145,32 +149,55 @@ void loop() {
 
     }
  }
- if (moistVal >= tooWet)
+ if (!beepBool && (moistVal>=tooWet || moistVal<=tooDry || value <=tooDark)){
+    beepBool = true;
+ }
+ if (moistVal >=tooWet && beepBool){
   EasyBuzzer.beep(
-            3000,
+            2500,
             500,
             300,
             3,
             3000,
-            3
+            2
         );
-  else if (moistVal <= tooDry)
+  beepBool = false;
+  sec = second();
+  mins = minute();
+  hours = hour();
+ }
+  else if (moistVal <= tooDry && beepBool){
     EasyBuzzer.beep(
-            3000,
+            2500,
             500,
-            500,
+            300,
             5,
             2000,
-            5
+            2
           );
-  else if (value <= tooDark && hour()>=16)
+    beepBool = false;
+    sec = second();
+    mins = minute();
+    hours = hour();
+}
+  else if (value <= tooDark && hour()>=16 && beepBool){
     EasyBuzzer.beep(
-            3000,
+            2500,
             500,
             300,
             1,
             2000,
             5
           );
-  delay(100);
+    beepBool = false;
+    sec = second();
+    mins = minute();
+    hours = hour();
+  }
+
+  if (second()-sec>12 || (second()<sec && second()+60-sec>12)){
+    beepBool = true;
+  }
+  
+  delay(10);
 }
