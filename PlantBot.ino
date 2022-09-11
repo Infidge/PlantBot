@@ -66,6 +66,7 @@ void setup() {
   lcd.setCursor(0, 1);
   lcd.print("Init...............");
   delay(1500);
+  lcd.clear();
   pinMode(A0,INPUT);
   pinMode(motor1pin1, OUTPUT);
   pinMode(motor1pin2, OUTPUT);
@@ -96,65 +97,7 @@ void loop() {
   }
   if (nightTime && value > tooDark)
     nightTime = false;
-    
-  /*if (moistVal<=tooDry || moistVal>=tooWet || (value <= tooDark && hour()>=16))
-    bad=true;
-  else bad=false;*/
 
-  /*if (digitalRead(13)==1)
-  bad = true;
-  else bad=false;
-
-  if (bad)EasyBuzzer.beep(
-            2500,
-            500,
-            300,
-            5,
-            2000,
-            2
-          ); 
-  else EasyBuzzer.stopBeep();*/
-  /*  
-  if (bad){
-        digitalWrite(motor1pin1, HIGH); 
-        digitalWrite(motor1pin2, LOW); 
-        digitalWrite(motor2pin1, HIGH); 
-        digitalWrite(motor2pin2, LOW);
-        analogWrite(ENA_pin, 100);
-        analogWrite(ENB_pin, 100);
-        delay(1000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-        digitalWrite(motor1pin1, LOW); 
-        digitalWrite(motor1pin2, HIGH); 
-        digitalWrite(motor2pin1, LOW); 
-        digitalWrite(motor2pin2, HIGH);
-        analogWrite(ENA_pin, 100);
-        analogWrite(ENB_pin, 100);
-        delay(2000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-        digitalWrite(motor1pin1, HIGH); 
-        digitalWrite(motor1pin2, LOW); 
-        digitalWrite(motor2pin1, HIGH); 
-        digitalWrite(motor2pin2, LOW);
-        analogWrite(ENA_pin, 100);
-        analogWrite(ENB_pin, 100);
-        delay(1000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-        if (moistVal<=tooDry){
-          EasyBuzzer.beep(3000);
-        }
-        else if (moistVal>=tooWet){
-          EasyBuzzer.beep(2000);
-        }
-        else if (value<=tooDark && hour()>=16){
-          EasyBuzzer.beep(2500);
-        }
-  }
-  else EasyBuzzer.stopBeep();*/
-  
   if ((moistVal <= tooDry) || (moistVal >= tooWet)) {
     
       if (!bad){
@@ -166,21 +109,12 @@ void loop() {
       lcd.clear();
       lcd.setCursor(4,0);
       lcd.write(byte(1));
-      /*
-      lcd.print(" ________  ");
-      lcd.setCursor(0,1);
-      lcd.print(" |       |    ");
-      */
     }
     else{
       lcd.clear();
       Serial.println("neutral humidity");
       lcd.setCursor(4,0);
       lcd.write(byte(1));
-      /*
-      lcd.setCursor(0,1);
-      lcd.print(" ________  ");
-      */
     }
   }
   else {
@@ -189,36 +123,12 @@ void loop() {
       Serial.println("neutral light");
       lcd.setCursor(4,0);
       lcd.write(byte(1));
-      /*
-      lcd.setCursor(0,1);
-      lcd.print(" ________  ");
-      */
     }
     else if (value > tooDark){
       lcd.clear();
       Serial.println("Smile");
       lcd.setCursor(4,0);
       lcd.write(byte(0));
-      /*
-      lcd.setCursor(0,0);
-      lcd.print(" |        |  ");
-      lcd.setCursor(0,1);
-      lcd.print("  ________  ");
-      */
-      if (!good){
-        /*digitalWrite(motor1pin1, HIGH); 
-        digitalWrite(motor1pin2, LOW); 
-        digitalWrite(motor2pin1, HIGH); 
-        digitalWrite(motor2pin2, LOW);
-        analogWrite(ENA_pin, speeds);
-        analogWrite(ENB_pin, speeds);
-        delay(3000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-        good = true;
-        bad = false;*/
-    }
-
     }
  }
  if (!beepBool && (moistVal>=tooWet || moistVal<=tooDry || (value <=tooDark && hour()>=16)) && (second()-sec>12 || (second()<sec && second()+60-sec>12))){
@@ -261,41 +171,5 @@ void loop() {
     beepBool = false;
     sec = second();
   }
-
-  /*if (second()-sec>12 || (second()<sec && second()+60-sec>12)){
-    beepBool = true;
-    EasyBuzzer.stopBeep();
-    Serial.println("stop buzzer");
-  }*/
   delay(100);
 }
-
-/*void wiggle (){
-        digitalWrite(motor1pin1, HIGH); 
-        digitalWrite(motor1pin2, LOW); 
-        digitalWrite(motor2pin1, HIGH); 
-        digitalWrite(motor2pin2, LOW);
-        analogWrite(ENA_pin, speeds);
-        analogWrite(ENB_pin, speeds);
-        delay(1000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-        digitalWrite(motor1pin1, LOW); 
-        digitalWrite(motor1pin2, HIGH); 
-        digitalWrite(motor2pin1, LOW); 
-        digitalWrite(motor2pin2, HIGH);
-        analogWrite(ENA_pin, speeds);
-        analogWrite(ENB_pin, speeds);
-        delay(2000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-        digitalWrite(motor1pin1, HIGH); 
-        digitalWrite(motor1pin2, LOW); 
-        digitalWrite(motor2pin1, HIGH); 
-        digitalWrite(motor2pin2, LOW);
-        analogWrite(ENA_pin, speeds);
-        analogWrite(ENB_pin, speeds);
-        delay(1000);
-        analogWrite(ENA_pin, 0);
-        analogWrite(ENB_pin, 0);
-}*/
